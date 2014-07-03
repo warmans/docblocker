@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+foreach (array(__DIR__ . '/../../autoload.php', __DIR__ . '/vendor/autoload.php') as $file) {
+    if (file_exists($file)) {
+        require $file;
+        $loaded = true;
+        break;
+    }
+}
+
+$services = new Pimple();
+
+$services['filesystem'] = $services->share(function () {
+    return new \Docblocker\Filesystem();
+});
+
+$services['command.parse'] = $services->share(function () use ($services) {
+    return new \Docblocker\Console\Command\Parse($services['filesystem']);
+});
+
+$application = new \Symfony\Component\Console\Application();
+$application->add($services['command.parse']);
+$application->run();

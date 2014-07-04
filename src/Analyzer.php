@@ -14,7 +14,7 @@ class Analyzer
     public function getAnalysis()
     {
         return array_merge(
-            $this->getOverview(),
+            $this->getOverview()
             $this->getScores()
         );
     }

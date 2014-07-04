@@ -17,9 +17,13 @@ class CodeParser
     public function parseDir($path)
     {
         $filemap = $this->filesystem->getFileMap($path);
+        $totalFiles = count($filemap);
 
+       echo "processing...\n";
         $results = array();
         foreach ($filemap as $abspath => $filename) {
+
+           echo "\r ".(--$totalFiles)." remain";
 
             //reflect class
             $file = new FileReflector($abspath);

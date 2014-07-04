@@ -29,7 +29,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
         foreach (new \RecursiveIteratorIterator($iterator) as $path) {
             if ($path->isFile()) {
                 $pathString = $path->getPathname();
-                $map[$pathString] = $this->openFile($pathString, 'r');
+                $map[$pathString] = basename($path);
             }
         }
 

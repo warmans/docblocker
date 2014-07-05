@@ -13,10 +13,19 @@ class FilesystemTest extends \PHPUnit_Framework_TestCase
         $this->object = new Filesystem();
     }
 
-    public function testGetFileMapReturnsPaths()
+    public function testGetFileMapReturnsFilename()
     {
         $map = $this->object->getFileMap(TEST_FIXTURE.'/proj');
-        $this->assertContains('A.php', key($map));
+
+        $this->assertContains('A.php', $map);
+        $this->assertContains('B.php', $map);
+    }
+
+    public function testGetFileMapReturnsFilepath()
+    {
+        $map = $this->object->getFileMap(TEST_FIXTURE.'/proj/');
+        $this->assertContains(TEST_FIXTURE.'/proj/A.php', array_keys($map));
+        $this->assertContains(TEST_FIXTURE.'/proj/Sub/B.php', array_keys($map));
     }
 
     public function testGetFileReturnsFileInstance()

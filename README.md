@@ -7,6 +7,14 @@ Analyses doc block coverage and quality across a PHP project.
 
     ./docblocker parse /path/to/project/src
 
+### Arguments
+
+| Argument      | Description                                   | Required          |
+| ------------- | --------------------------------------------- | ----------------- |
+| target        | The path to your project source               | Yes               |
+
+
+### Options
 
 | Option        | Description                                   | Status            |
 | ------------- | --------------------------------------------- | ----------------- |

@@ -1,6 +1,6 @@
 Doc Blocker
 ===========
-[![Build Status](https://travis-ci.org/warmans/docblocker.svg?branch=master)] (https://travis-ci.org/warmans/docblocker)[![Scrutinizer Code Quality] (https://scrutinizer-ci.com/g/warmans/docblocker/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/warmans/docblocker/?branch=master)[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/warmans/docblocker/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/warmans/docblocker/?branch=master)
+[![Build Status](https://travis-ci.org/warmans/docblocker.svg?branch=master)] (https://travis-ci.org/warmans/docblocker)[![Scrutinizer Code Quality] (https://scrutinizer-ci.com/g/warmans/docblocker/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/warmans/docblocker/?branch=master)[![Code Coverage](https://scrutinizer-ci.com/g/warmans/docblocker/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/warmans/docblocker/?branch=master)
 
 Analyses doc block coverage and quality across a PHP project.
 

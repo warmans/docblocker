@@ -42,7 +42,7 @@ class Analyser implements \SplSubject, ProgressAwareInterface
     {
         $this->analysersRun = 0;
         $result = array();
-        foreach($this->analysers as $analyser) {
+        foreach ($this->analysers as $analyser) {
             $result = array_merge($result, $analyser->analyse());
             $this->analysersRun++;
             $this->notify();

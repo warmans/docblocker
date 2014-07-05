@@ -8,8 +8,8 @@ namespace MyProject;
  *
  * @package MyProject
  */
-abstract class A {
-
+abstract class A
+{
     /**
      * A Method
      *

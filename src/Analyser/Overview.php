@@ -10,7 +10,7 @@ class Overview extends AbstractAnalyser
         $methods_total = 0;
         $methods_with_docs = 0;
 
-        foreach($this->rawData as $groupName => $items) {
+        foreach ($this->rawData as $groupName => $items) {
 
             $structure_with_docs = 0;
 

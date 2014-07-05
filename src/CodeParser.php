@@ -45,7 +45,7 @@ class CodeParser implements \SplSubject, ProgressAwareInterface
             $file = new FileReflector($abspath);
             $file->process();
 
-            foreach(array('classes' => $file->getClasses(), 'interfaces' => $file->getInterfaces()) as $entity_name => $entities) {
+            foreach (array('classes' => $file->getClasses(), 'interfaces' => $file->getInterfaces()) as $entity_name => $entities) {
 
                 if (!isset($results[$entity_name])) {
                     //init entity type
@@ -95,7 +95,9 @@ class CodeParser implements \SplSubject, ProgressAwareInterface
                 'exists' => true,
                 'short_description' => (string) $doc->getShortDescription(),
                 'long_description' => (string) $doc->getLongDescription(),
-                'tags' => array_map(function ($item) { return array('tag' => $item->getName(), 'value'=>$item->getContent()); }, $doc->getTags())
+                'tags' => array_map(function ($item) {
+                    return array('tag' => $item->getName(), 'value'=>$item->getContent());
+                }, $doc->getTags())
             );
         } else {
             return array(

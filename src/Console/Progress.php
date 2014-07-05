@@ -4,8 +4,8 @@ namespace Docblocker\Console;
 use SplSubject;
 use Symfony\Component\Console\Helper\ProgressBar;
 
-class Progress extends ProgressBar implements \SplObserver {
-
+class Progress extends ProgressBar implements \SplObserver
+{
     /**
      * Receive update from subject
      *

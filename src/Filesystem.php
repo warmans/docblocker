@@ -10,7 +10,7 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
      * @param string $mode
      * @return File
      */
-    public function openFile($path, $mode='a+')
+    public function openFile($path, $mode = 'a+')
     {
         return new File($path, $mode);
     }

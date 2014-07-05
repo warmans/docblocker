@@ -15,11 +15,6 @@ class CodeParser implements \SplSubject, ProgressAwareInterface
     private $observers;
 
     /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    /**
      * @var int
      */
     private $numFilesToProcess = 0;
@@ -29,13 +24,9 @@ class CodeParser implements \SplSubject, ProgressAwareInterface
      */
     private $numFilesProcessed = 0;
 
-    /**
-     * @param Filesystem $filesystem
-     */
-    public function __construct(Filesystem $filesystem)
+    public function __construct()
     {
         $this->observers = new \SplObjectStorage();
-        $this->filesystem = $filesystem;
     }
 
     /**

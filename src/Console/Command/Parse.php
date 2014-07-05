@@ -44,7 +44,7 @@ class Parse extends Command
         $prog->start();
 
         //parse the files
-        $parser = new CodeParser($this->filesystem);
+        $parser = new CodeParser;
         $parser->attach($prog);
         $rawData = $parser->parseFiles($filemap);
         $output->writeln(' File Parsing Complete');

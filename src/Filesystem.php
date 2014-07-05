@@ -34,6 +34,6 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
         }
 
         //return leaves first
-        return array_reverse($map);
+        return $map;
     }
 }

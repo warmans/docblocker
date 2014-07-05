@@ -1,7 +1,8 @@
 <?php
 namespace Docblocker\Console\Command;
 
-use Docblocker\Analyzer;
+use Docblocker\Analyser;
+use Docblocker\Console\Progress;
 use Docblocker\Filesystem;
 use Docblocker\CodeParser;
 use Symfony\Component\Console\Command\Command;
@@ -34,12 +35,36 @@ class Parse extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        //get file map
+        $filemap = $this->filesystem->getFileMap($input->getArgument('target'));
+
+        //setup a progress bar for raw file parsing
+        $prog = new Progress($output, count($filemap));
+        $prog->setFormat('verbose');
+        $prog->start();
+
+        //parse the files
         $parser = new CodeParser($this->filesystem);
-        $rawData = $parser->parseDir($input->getArgument('target'));
+        $parser->attach($prog);
+        $rawData = $parser->parseFiles($filemap);
+        $output->writeln(' File Parsing Complete');
 
-        $analyzer = new Analyzer($rawData);
-        $analysis = $analyzer->getAnalysis();
+        //setup some analysers for the raw data
+        $analysers = array(
+            new Analyser\Overview($rawData),
+            new Analyser\DocScore($rawData)
+        );
 
-        print_r($analysis);
+        //set up a progress bar for analysis
+        $prog = new Progress($output, count($analysers));
+        $prog->setFormat('verbose');
+        $prog->start();
+
+        $analyser = new Analyser($rawData, $analysers);
+        $analyser->attach($prog);
+        $analysis = $analyser->getAnalysis();
+        $output->writeln(' Analysis Complete');
+
+        //print_r($analysis);
     }
 }

@@ -1,29 +1,54 @@
 <?php
 namespace Docblocker;
 
+use Docblocker\Console\ProgressAwareInterface;
 use phpDocumentor\Reflection\BaseReflector;
 use phpDocumentor\Reflection\ClassReflector;
 use phpDocumentor\Reflection\FileReflector;
+use SplObserver;
 
-class CodeParser
+class CodeParser implements \SplSubject, ProgressAwareInterface
 {
+    /**
+     * @var \SplObjectStorage
+     */
+    private $observers;
+
+    /**
+     * @var Filesystem
+     */
     private $filesystem;
 
+    /**
+     * @var int
+     */
+    private $numFilesToProcess = 0;
+
+    /**
+     * @var int
+     */
+    private $numFilesProcessed = 0;
+
+    /**
+     * @param Filesystem $filesystem
+     */
     public function __construct(Filesystem $filesystem)
     {
+        $this->observers = new \SplObjectStorage();
         $this->filesystem = $filesystem;
     }
 
-    public function parseDir($path)
+    /**
+     * @param array $filemap
+     * @return array
+     */
+    public function parseFiles(array $filemap)
     {
-        $filemap = $this->filesystem->getFileMap($path);
-        $totalFiles = count($filemap);
+        $this->numFilesToProcess = count($filemap);
+        $this->numFilesProcessed = 0;
 
-       echo "processing...\n";
         $results = array();
         foreach ($filemap as $abspath => $filename) {
-
-           echo "\r ".(--$totalFiles)." remain";
 
             //reflect class
             $file = new FileReflector($abspath);
@@ -59,11 +84,18 @@ class CodeParser
                     $results[$entity_name][] = $result;
                 }
             }
+
+            $this->numFilesProcessed++;
+            $this->notify();
         }
 
         return $results;
     }
 
+    /**
+     * @param BaseReflector $reflection
+     * @return array
+     */
     protected function parseDocblock (BaseReflector $reflection)
     {
         $doc = $reflection->getDocBlock();
@@ -84,4 +116,61 @@ class CodeParser
         }
     }
 
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Attach an SplObserver
+     * @link http://php.net/manual/en/splsubject.attach.php
+     * @param SplObserver $observer <p>
+     * The <b>SplObserver</b> to attach.
+     * </p>
+     * @return void
+     */
+    public function attach(SplObserver $observer)
+    {
+        $this->observers->attach($observer);
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Detach an observer
+     * @link http://php.net/manual/en/splsubject.detach.php
+     * @param SplObserver $observer <p>
+     * The <b>SplObserver</b> to detach.
+     * </p>
+     * @return void
+     */
+    public function detach(SplObserver $observer)
+    {
+        $this->observers->detach($observer);
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Notify an observer
+     * @link http://php.net/manual/en/splsubject.notify.php
+     * @return void
+     */
+    public function notify()
+    {
+        foreach ($this->observers as $observer) {
+            $observer->update($this);
+        }
+
+    }
+
+    /**
+     * @return int
+     */
+    public function getProgress()
+    {
+        return $this->numFilesProcessed;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFinished()
+    {
+        return ($this->numFilesProcessed >= $this->numFilesToProcess);
+    }
 }

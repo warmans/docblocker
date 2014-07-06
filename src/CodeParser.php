@@ -57,6 +57,7 @@ class CodeParser implements \SplSubject, ProgressAwareInterface
                     $result = array(
                         //top level class attributes
                         'name' => $entity->getName(),
+                        'filepath' => $abspath,
                         'namespace' => $entity->getNamespace(),
                         'doc' => $this->parseDocblock($entity),
 
@@ -67,6 +68,10 @@ class CodeParser implements \SplSubject, ProgressAwareInterface
                     foreach ($entity->getMethods() as $method) {
                         $result['methods'][] = array(
                             'name' => $method->getName(),
+                            'line_number' => $method->getLineNumber(),
+                            'args' => array_map(function ($arg) {
+                                return array('name' => $arg->getName(), 'type' => $arg->getType(), 'default' => $arg->getDefault());
+                            }, $method->getArguments()),
                             'doc' => $this->parseDocblock($method)
                         );
                     }

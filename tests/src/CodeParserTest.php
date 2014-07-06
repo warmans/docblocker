@@ -40,6 +40,13 @@ class CodeParserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('\MyProject\A', $res['classes'][0]['name']);
     }
 
+
+    public function testParseFilesReturnsClassFilepath()
+    {
+        $res = $this->object->parseFiles(array(TEST_FIXTURE.'/proj/A.php'=>'A.php'));
+        $this->assertEquals(TEST_FIXTURE.'/proj/A.php', $res['classes'][0]['filepath']);
+    }
+
     public function testParseFilesReturnsClassNamespace()
     {
         $res = $this->object->parseFiles(array(TEST_FIXTURE.'/proj/A.php'=>'A.php'));
@@ -81,6 +88,12 @@ class CodeParserTest extends \PHPUnit_Framework_TestCase
     {
         $res = $this->object->parseFiles(array(TEST_FIXTURE.'/proj/A.php'=>'A.php'));
         $this->assertEquals('aMethod', $res['classes'][0]['methods'][0]['name']);
+    }
+
+    public function testParseFilesReturnsMethodLineNumber()
+    {
+        $res = $this->object->parseFiles(array(TEST_FIXTURE.'/proj/A.php'=>'A.php'));
+        $this->assertEquals(22, $res['classes'][0]['methods'][0]['line_number']);
     }
 
     public function testParseFilesReturnsMethodDocExists()

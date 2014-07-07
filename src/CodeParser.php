@@ -38,18 +38,19 @@ class CodeParser implements \SplSubject, ProgressAwareInterface
         $this->numFilesToProcess = count($filemap);
         $this->numFilesProcessed = 0;
 
-        $results = array();
+        $results = array('entities'=>array());
+
         foreach ($filemap as $abspath => $filename) {
 
             //reflect class
             $file = new FileReflector($abspath);
             $file->process();
 
-            foreach (array('classes' => $file->getClasses(), 'interfaces' => $file->getInterfaces()) as $entity_name => $entities) {
+            foreach (array('classes' => $file->getClasses(), 'interfaces' => $file->getInterfaces()) as $entityName => $entities) {
 
-                if (!isset($results[$entity_name])) {
+                if (!isset($results['entities'][$entityName])) {
                     //init entity type
-                    $results[$entity_name] = array();
+                    $results['entities'][$entityName] = array();
                 }
 
                 foreach ($entities as $entity) {
@@ -77,7 +78,7 @@ class CodeParser implements \SplSubject, ProgressAwareInterface
                     }
 
                     //store result
-                    $results[$entity_name][] = $result;
+                    $results['entities'][$entityName][] = $result;
                 }
             }
 

@@ -30,7 +30,7 @@ class Analyser implements \SplSubject, ProgressAwareInterface
      * @param array $rawData
      * @param array $analysers
      */
-    public function __construct(array $rawData, array $analysers)
+    public function __construct(array &$rawData, array $analysers)
     {
         $this->rawData = $rawData;
         $this->analysers = $analysers;
@@ -38,12 +38,11 @@ class Analyser implements \SplSubject, ProgressAwareInterface
         $this->observers = new \SplObjectStorage();
     }
 
-    public function getAnalysis()
+    public function addAnalysis()
     {
         $this->analysersRun = 0;
-        $result = array();
         foreach ($this->analysers as $analyser) {
-            $result = array_merge($result, $analyser->analyse());
+            $analyser->analyse();
             $this->analysersRun++;
             $this->notify();
         }

@@ -62,9 +62,8 @@ class Parse extends Command
 
         $analyser = new Analyser($rawData, $analysers);
         $analyser->attach($prog);
-        $analysis = $analyser->getAnalysis();
-        $output->writeln(' Analysis Complete');
+        $analyser->addAnalysis();
 
-        //print_r($analysis);
+        print_r($rawData);
     }
 }

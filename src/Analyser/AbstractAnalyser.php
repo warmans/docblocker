@@ -5,9 +5,9 @@ abstract class AbstractAnalyser
 {
     protected $rawData;
 
-    public function __construct(array $rawData)
+    public function __construct(array &$rawData)
     {
-        $this->rawData = $rawData;
+        $this->rawData =& $rawData;
     }
 
     abstract public function analyse();

@@ -5,12 +5,12 @@ class Overview extends AbstractAnalyser
 {
     public function analyse()
     {
-        $results = array('overview' => array());
+        $this->rawData['overview'] = array();
 
         $methods_total = 0;
         $methods_with_docs = 0;
 
-        foreach ($this->rawData as $groupName => $items) {
+        foreach ($this->rawData['entities'] as $groupName => $items) {
 
             $structure_with_docs = 0;
 
@@ -26,8 +26,8 @@ class Overview extends AbstractAnalyser
                 }
             }
 
-            $results['overview'] = array_merge(
-                $results['overview'],
+            $this->rawData['overview'] = array_merge(
+                $this->rawData['overview'],
                 array(
                     $groupName.'_with_docs' => $structure_with_docs,
                     $groupName.'_total' => count($items),
@@ -36,7 +36,5 @@ class Overview extends AbstractAnalyser
                 )
             );
         }
-
-        return $results;
     }
 }

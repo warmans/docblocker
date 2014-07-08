@@ -5,6 +5,8 @@ use Docblocker\Analyser;
 use Docblocker\Console\Progress;
 use Docblocker\Filesystem;
 use Docblocker\CodeParser;
+use Docblocker\Report\Json;
+use Docblocker\Report\Text;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,9 +25,11 @@ class Parse extends Command
 
     protected function configure()
     {
-        $this->setName('parse ')
+        $this->setName('parse')
             ->setDescription('Parse a directory for PHP classes')
-            ->addArgument('target', InputArgument::REQUIRED, 'Directory to parse');
+            ->addArgument('target', InputArgument::REQUIRED, 'Directory to parse')
+            ->addOption('fail-scores-below', null, InputOption::VALUE_OPTIONAL, 'Fail if project score is less than the specified value', 0)
+            ->addOption('report-json', null, InputOption::VALUE_OPTIONAL, 'Output JSON report to this location');
     }
 
     /**
@@ -47,7 +51,7 @@ class Parse extends Command
         $parser = new CodeParser;
         $parser->attach($prog);
         $rawData = $parser->parseFiles($filemap);
-        $output->writeln(' File Parsing Complete');
+        $output->writeln('');
 
         //setup some analysers for the raw data
         $analysers = array(
@@ -60,10 +64,26 @@ class Parse extends Command
         $prog->setFormat('verbose');
         $prog->start();
 
-        $analyser = new Analyser($rawData, $analysers);
+        $analyser = new Analyser($analysers);
         $analyser->attach($prog);
-        $analyser->addAnalysis();
+        $analyser->runAll();
 
-        print_r($rawData);
+        //always output text
+        $textOutput = new Text($rawData);
+        $output->writeLn($textOutput->render());
+
+        //optionally output json
+        if ($jsonReportPath = $input->geTOption('report-json')) {
+            $jsonReport = new Json($rawData);
+            $this->filesystem->putContents($jsonReportPath, $jsonReport->render());
+            $output->writeln('Write report to '.$jsonReportPath);
+        }
+
+        //fail if score too low
+        if ($rawData['overview']['score'] < $input->getOption('fail-scores-below')) {
+            $output->writeln('<error>Project score ('.$rawData['overview']['score'].') was less than minimum of '.$input->getOption('fail-scores-below').'</error>');
+            return 1;
+        }
+        return 0;
     }
 }

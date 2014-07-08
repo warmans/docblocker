@@ -21,24 +21,18 @@ class Analyser implements \SplSubject, ProgressAwareInterface
      */
     protected $analysersRun = 0;
 
-    /**
-     * @var array
-     */
-    protected $rawData;
 
     /**
-     * @param array $rawData
      * @param array $analysers
      */
-    public function __construct(array &$rawData, array $analysers)
+    public function __construct(array $analysers)
     {
-        $this->rawData = $rawData;
         $this->analysers = $analysers;
 
         $this->observers = new \SplObjectStorage();
     }
 
-    public function addAnalysis()
+    public function runAll()
     {
         $this->analysersRun = 0;
         foreach ($this->analysers as $analyser) {

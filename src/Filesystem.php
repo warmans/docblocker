@@ -15,6 +15,11 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
         return new File($path, $mode);
     }
 
+    public function putContents($path, $data)
+    {
+        return file_put_contents($path, $data);
+    }
+
     /**
      * Get a map of path => basenames
      *

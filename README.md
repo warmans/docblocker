@@ -24,3 +24,35 @@ Analyses doc block coverage and quality across a PHP project.
 | --fail-score-below    | Exit non-zero if the project score is below given value   |
 | --no-progress         | Omit progress bars from output                            |
 
+
+### Sample Text Report
+
+```
+Processing Files...
+ 3/3 [============================] 100%  1 sec
+
+Analysing...
+ 3/3 [============================] 100%  1 sec
+
+Project
+--------------------------------------------------------------------------------
+Overall Score: 4.72 / 10
+
+Coverage
+--------------------------------------------------------------------------------
+Class Coverage: 100%
+Method Coverage: 60%
+Interface Coverage: 0%
+
+Issues
+--------------------------------------------------------------------------------
+\MyProject\Sub\B::foo scored 0 out of 10
+- Add method docblock
+
+\MyProject\Sub\B::bar scored 2.5 out of 10
+- Add a method description
+- Not enough param tags. Method has 2 arguments but has 1 param tags
+
+\MyProject\Sub\BInterface::foo scored 0 out of 10
+- Add method docblock
+```

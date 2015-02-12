@@ -17,8 +17,10 @@ Analyses doc block coverage and quality across a PHP project.
 
 ### Options
 
-| Option        | Description                                   | Status            |
-| ------------- | --------------------------------------------- | ----------------- |
-| --report-json | Output a JSON report to the given path        | Not implemented   |
-| --report-text | Output a plain text report to the given path  | Not implemented   |
-| --report-xml  | Output an XML report to the given path        | Not implemented   |
+| Option                | Description                                               |
+| --------------------- | --------------------------------------------------------- |
+| --report-text         | Output a text report to the given path instead of stdout  |
+| --report-json         | Output a JSON report to the given path                    |
+| --fail-score-below    | Exit non-zero if the project score is below given value   |
+| --no-progress         | Omit progress bars from output                            |
+

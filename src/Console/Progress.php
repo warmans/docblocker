@@ -4,6 +4,11 @@ namespace Docblocker\Console;
 use SplSubject;
 use Symfony\Component\Console\Helper\ProgressBar;
 
+/**
+ * Allows progress bar to observe other processes.
+ *
+ * @package Docblocker\Console
+ */
 class Progress extends ProgressBar implements \SplObserver
 {
     /**

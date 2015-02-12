@@ -23,13 +23,18 @@ class Parse extends Command
         parent::__construct();
     }
 
+    /**
+     * Setup command options
+     */
     protected function configure()
     {
         $this->setName('parse')
             ->setDescription('Parse a directory for PHP classes')
             ->addArgument('target', InputArgument::REQUIRED, 'Directory to parse')
-            ->addOption('fail-scores-below', null, InputOption::VALUE_OPTIONAL, 'Fail if project score is less than the specified value', 0)
-            ->addOption('report-json', null, InputOption::VALUE_OPTIONAL, 'Output JSON report to this location');
+            ->addOption('fail-score-below', null, InputOption::VALUE_OPTIONAL, 'Fail if project score is less than the specified value', 0)
+            ->addOption('report-json', null, InputOption::VALUE_OPTIONAL, 'Output JSON report to this location')
+            ->addOption('report-text', null, InputOption::VALUE_OPTIONAL, 'Output text report to this location')
+            ->addOption('no-progress', null, InputOption::VALUE_NONE, 'Omit Progress bars in output');
     }
 
     /**
@@ -42,46 +47,62 @@ class Parse extends Command
         //get file map
         $filemap = $this->filesystem->getFileMap($input->getArgument('target'));
 
-        //setup a progress bar for raw file parsing
-        $prog = new Progress($output, count($filemap));
-        $prog->setFormat('verbose');
-        $prog->start();
+        $output->writeln("\nProcessing Files...");
 
         //parse the files
         $parser = new CodeParser;
-        $parser->attach($prog);
+
+        //setup a progress bar for raw file parsing
+        if (!$input->getOption('no-progress')) {
+            $prog = new Progress($output, count($filemap));
+            $prog->setFormat('verbose');
+            $prog->start();
+
+            $parser->attach($prog);
+        }
+
         $rawData = $parser->parseFiles($filemap);
         $output->writeln('');
+
+        $output->writeln("\nAnalysing...");
 
         //setup some analysers for the raw data
         $analysers = array(
             new Analyser\Overview($rawData),
-            new Analyser\DocScore($rawData)
+            new Analyser\DocScore($rawData),
+            new Analyser\ProjectScore($rawData),
         );
 
-        //set up a progress bar for analysis
-        $prog = new Progress($output, count($analysers));
-        $prog->setFormat('verbose');
-        $prog->start();
-
         $analyser = new Analyser($analysers);
-        $analyser->attach($prog);
+        //set up a progress bar for analysis
+        if (!$input->getOption('no-progress')) {
+            $prog = new Progress($output, count($analysers));
+            $prog->setFormat('verbose');
+            $prog->start();
+
+            $analyser->attach($prog);
+        }
         $analyser->runAll();
 
-        //always output text
+        //always output text one way or another
         $textOutput = new Text($rawData);
-        $output->writeLn($textOutput->render());
+        if ($textReportPath = $input->getOption('report-text')) {
+            $this->filesystem->putContents($textReportPath, $textOutput->render());
+            $output->writeln("\n\nWrote text report to $textReportPath");
+        } else {
+            $output->writeLn($textOutput->render());
+        }
 
         //optionally output json
-        if ($jsonReportPath = $input->geTOption('report-json')) {
+        if ($jsonReportPath = $input->getOption('report-json')) {
             $jsonReport = new Json($rawData);
             $this->filesystem->putContents($jsonReportPath, $jsonReport->render());
-            $output->writeln('Write report to '.$jsonReportPath);
+            $output->writeln("\nWrote json report to $jsonReportPath");
         }
 
         //fail if score too low
-        if ($rawData['overview']['score'] < $input->getOption('fail-scores-below')) {
-            $output->writeln('<error>Project score ('.$rawData['overview']['score'].') was less than minimum of '.$input->getOption('fail-scores-below').'</error>');
+        if ($rawData['project']['score'] < $input->getOption('fail-score-below')) {
+            $output->writeln('<error>Project score ('.$rawData['overview']['score'].') was less than minimum of '.$input->getOption('fail-score-below').'</error>');
             return 1;
         }
         return 0;

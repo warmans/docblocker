@@ -15,6 +15,13 @@ class Filesystem extends \Symfony\Component\Filesystem\Filesystem
         return new File($path, $mode);
     }
 
+    /**
+     * same as file_put_contents
+     *
+     * @param $path
+     * @param $data
+     * @return int
+     */
     public function putContents($path, $data)
     {
         return file_put_contents($path, $data);

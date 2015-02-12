@@ -32,6 +32,9 @@ class Analyser implements \SplSubject, ProgressAwareInterface
         $this->observers = new \SplObjectStorage();
     }
 
+    /**
+     * Run all configured analysers
+     */
     public function runAll()
     {
         $this->analysersRun = 0;
@@ -42,11 +45,17 @@ class Analyser implements \SplSubject, ProgressAwareInterface
         }
     }
 
+    /**
+     * @return int
+     */
     public function getProgress()
     {
         return $this->analysersRun;
     }
 
+    /**
+     * @return bool
+     */
     public function isFinished()
     {
         return ($this->analysersRun >= count($this->analysers));

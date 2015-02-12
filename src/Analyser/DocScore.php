@@ -1,10 +1,18 @@
 <?php
 namespace Docblocker\Analyser;
 
+/**
+ * Class DocScore
+ *
+ * @package Docblocker\Analyser
+ */
 class DocScore extends AbstractAnalyser
 {
     const MAX_POSSIBLE_SCORE = 10;
 
+    /**
+     * Analyse data
+     */
     public function analyse()
     {
         $numElements = 0;
@@ -21,26 +29,14 @@ class DocScore extends AbstractAnalyser
                 $item['score'] = $this->scoreClass($item);
             }
         }
-
-        //score available per class/interface
-        $elementScore = static::MAX_POSSIBLE_SCORE / $numElements;
-
-        $projectScore = 0;
-        foreach ($this->rawData['entities'] as $scoredItems) {
-            foreach ($scoredItems as $scoredItem) {
-                $projectScore += $elementScore * ($scoredItem['score']['score'] / static::MAX_POSSIBLE_SCORE);
-            }
-        }
-
-        $this->rawData['overview']['score'] = round($projectScore, 2);
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     protected function scoreClass($data)
     {
-        if (!$data['doc']['exists']) {
-            return array('score'=>0, 'hints'=>array('Add class docblock'));
-        }
-
         $score  = 0;
         $hints = array();
 
@@ -58,7 +54,8 @@ class DocScore extends AbstractAnalyser
 
         $incompleteMethods = 0;
         foreach ($data['methods'] as $method) {
-            $score += $elementScore * ($method['score']['score'] / static::MAX_POSSIBLE_SCORE); //max possible score multiplied by decimal version of method score e.g. 0.5
+            //max possible score multiplied by decimal version of method score e.g. 0.5
+            $score += $elementScore * ($method['score']['score'] / static::MAX_POSSIBLE_SCORE);
             if ($method['score']['score'] != 10) {
                  $incompleteMethods++;
             }
@@ -71,6 +68,10 @@ class DocScore extends AbstractAnalyser
         return array('score' => round($score, 2), 'hints' => $hints);
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     protected function scoreMethod($data)
     {
         //nothing to score

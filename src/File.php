@@ -1,6 +1,11 @@
 <?php
 namespace Docblocker;
 
+/**
+ * Represents single file
+ *
+ * @package Docblocker
+ */
 class File extends \SplFileObject
 {
     /**
